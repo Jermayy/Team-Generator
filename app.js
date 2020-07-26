@@ -17,6 +17,7 @@ const { nextTick } = require("process");
 
 const team = [];
 
+
 function initQuestions() {
 
     inquirer.prompt([
@@ -28,30 +29,123 @@ function initQuestions() {
             default: "My Team"
         },
 
-        {
-            type: "list",
-            name: "initQuestions",
-            message: "Would you like to add a new Employee or Generate new team HTML",
-            choices: ["New Employee", "Generate HTML"],
-        }
 
     ]).then(userChoice => {
         teamName = userChoice.teamName;
-        next();
-    })
-}
-
-function next() {
-    if (res.initQuestions === "New Employee") {
         addEmployee();
-    } else {
-        var main = fs.readFileSync('./templates/main.html', 'utf8');
-        main = main.replace(/{{teamTitle}}/g, teamName);
-    }
+    })
 }
 
 
 function addEmployee() {
+    inquirer.prompt([{
+
+            type: "input",
+            name: "employeeName",
+            message: "Please enter employee's full name",
+            validate: (nameInput) => {
+                if (nameInput) {
+                    return true;
+                } else {
+                    console.log("Employee must have a name");
+                    return false;
+                }
+            }
+        },
+
+        {
+
+            type: "input",
+            name: "employeeId",
+            message: "Please enter employee's ID number",
+            validate: (idInput) => {
+                if (idInput) {
+                    return true;
+                } else {
+                    console.log("Employee must have an ID number");
+                    return false;
+                }
+            }
+        },
+        {
+
+            type: "input",
+            name: "employeeEmail",
+            message: "Please enter employee's Email Address",
+            validate: (idInput) => {
+                if (idInput) {
+                    return true;
+                } else {
+                    console.log("Employee must have an Email Address");
+                    return false;
+                }
+            }
+        },
+
+        {
+            type: "list",
+            name: "employeeRole",
+            message: "Please select employee's role",
+            choices: ["Manager", "Engineer", "Intern"]
+        },
+
+
+        {
+
+            type: "input",
+            name: "officeNumber",
+            message: "Please enter Manager's office phone number",
+            validate: (number) => {
+                if (number) {
+                    return true;
+                } else {
+                    console.log("Must enter an office phone number");
+                    return false;
+                }
+            },
+            when: (userInput) => userInput.employeeRole === "Manager"
+        },
+        {
+
+            type: "input",
+            name: "gitHubUserName",
+            message: "Please enter Engineer's GitHub Username",
+            validate: (username) => {
+                if (username) {
+                    return true;
+                } else {
+                    console.log("Must enter Engineer's GitHub Username");
+                    return false;
+                }
+            },
+            when: (userInput) => userInput.employeeRole === "Engineer"
+        },
+        {
+
+            type: "input",
+            name: "internSchool",
+            message: "Please enter Intern's School",
+            validate: (school) => {
+                if (school) {
+                    return true;
+                } else {
+                    console.log("Must enter Intern's school");
+                    return false;
+                }
+            },
+            when: (userInput) => userInput.employeeRole === "intern"
+        },
+
+        {
+            type: "confirm",
+            name: "addEmployee",
+            Message: "Would you like you add another team member? (Yes/No)" // If no, render HTML
+        }
+
+
+
+    ])
+
 
 }
 
