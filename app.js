@@ -16,7 +16,7 @@ const { nextTick } = require("process");
 // and to create objects for each team member (using the correct classes as blueprints!)
 
 const team = [];
-
+let teamTitle = "";
 
 function initQuestions() {
 
@@ -31,7 +31,7 @@ function initQuestions() {
 
 
     ]).then(userChoice => {
-        teamName = userChoice.teamName;
+        teamTitle = userChoice.teamName;
         addEmployee();
     })
 }
@@ -133,7 +133,7 @@ function addEmployee() {
                     return false;
                 }
             },
-            when: (userInput) => userInput.employeeRole === "intern"
+            when: (userInput) => userInput.employeeRole === "Intern"
         },
 
         {
@@ -144,9 +144,72 @@ function addEmployee() {
 
 
 
-    ])
+    ]).then(userAnswers => {
+        if (userAnswers.employeeRole === "Manager") {
+            const manager = new Manager(userAnswers.employeeName, userAnswers.employeeId, userAnswers.employeeEmail, userAnswers.officeNumber);
+            team.push(manager);
+        } else if (userAnswers.employeeRole === "Engineer") {
+            const engineer = new Engineer(userAnswers.employeeName, userAnswers.employeeId, userAnswers.employeeEmail, userAnswers.gitHubUserName);
+            team.push(engineer);
+        } else if (userAnswers.employeeRole === "Intern") {
+            const intern = new Intern(userAnswers.employeeName, userAnswers.employeeId, userAnswers.employeeEmail, userAnswers.internSchool);
+            team.push(intern);
+        }
+
+        if (userAnswers.addEmployee === true) {
+            addEmployee();
+        } else {
+
+            let main = fs.readFileSync(__dirname + '/templates/main.html', 'utf-8');
+            main = main.replace(/{{teamTitle}}/g, teamTitle);
 
 
+            let employeeCards = [];
+
+            team.forEach(member => {
+                const employee = member;
+                employeeCards += renderEmployee(employee)
+            });
+
+            main = main.replace('{{team}}', team);
+
+            fs.writeFileSync(__dirname + '/output/team.html', main);
+
+        }
+
+
+
+
+    })
+}
+
+function renderEmployee(employee) {
+    if (employee.getRole() === "Manager") {
+
+        let managerCard = fs.readFileSync(__dirname + "/templates/Manager.html", "utf-8");
+        managerCard = managerCard.replace('{{name}}', employee.getName());
+        managerCard = managerCard.replace('{{role}}', employee.getRole());
+        managerCard = managerCard.replace('{{id}}', employee.getId());
+        managerCard = managerCard.replace('{{email}}', employee.getEmail());
+        managerCard = managerCard.replace('{{officeNumber}}', employee.getOfficeNumber());
+        return managerCard;
+    } else if (employee.getRole() === "Engineer") {
+        let engineerCard = fs.readFileSync(__dirname + "/templates/Engineer.html", "utf-8");
+        engineerCard = engineerCard.replace('{{name}}', employee.getName());
+        engineerCard = engineerCard.replace('{{role}}', employee.getRole());
+        engineerCard = engineerCard.replace('{{id}}', employee.getId());
+        engineerCard = engineerCard.replace('{{email}}', employee.getEmail());
+        engineerCard = engineerCard.replace('{{github}}', employee.getGithub());
+        return engineerCard;
+    } else if (employee.getRole() === "Intern") {
+        let internCard = fs.readFileSync(__dirname + "/templates/Intern.html", "utf-8");
+        internCard = internCard.replace('{{name}}', employee.getName());
+        internCard = internCard.replace('{{role}}', employee.getRole());
+        internCard = internCard.replace('{{id}}', employee.getId());
+        internCard = internCard.replace('{{email}}', employee.getEmail());
+        internCard = internCard.replace('{{school}}', employee.getSchool());
+        return internCard;
+    }
 }
 
 
