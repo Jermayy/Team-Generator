@@ -18,7 +18,7 @@ Launch application by entering "node app.js" into your terminal and follow the p
 Each team requires 1 manager and can include as many engineers and/or interns as you want. Once you have completed adding your final team member, select No at 
 'addEmployee' to generate the HTML file into the Output folder.
 
-![](/Screenshots/terminal_screenshot.png)
+![](/screenshots/terminal_screenshot.png)
 
 ## License Details:  
 
